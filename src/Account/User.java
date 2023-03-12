@@ -12,6 +12,14 @@ public class User {
     private String password;
     private boolean administrator;
 
+    public User(String user, String password) {
+        this.user = user;
+        this.password = password;
+    }
+
+    public User() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -24,13 +32,6 @@ public class User {
     public int hashCode() {
         return Objects.hash(user, password);
     }
-
-    public User(String user, String password){
-        this.user = user;
-        this.password = password;
-    }
-
-    public User() {}
 
     public String getPassword() {
         return password;
@@ -56,15 +57,15 @@ public class User {
         this.administrator = administrator;
     }
 
-    public void createAccount(User p){
+    public void createAccount(User p) {
         String user = p.user;
         String password = p.password;
         boolean administrator = p.administrator;
-        String newRow = user+" "+password+" "+administrator;
+        String newRow = "\n" + user + ", " + password + ", " + administrator;
         Path pOut = Paths.get("Accounts.txt");
-        try{
-            Files.write(pOut,newRow.getBytes(), StandardOpenOption.APPEND);
-        }catch (IOException e){
+        try {
+            Files.write(pOut, newRow.getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

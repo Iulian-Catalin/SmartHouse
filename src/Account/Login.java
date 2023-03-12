@@ -11,43 +11,50 @@ import java.util.*;
 
 public class Login {
     private static List<User> listOfUsers;
-    public void login(){
-        listOfUsers=loadAccounts();
+
+    public boolean login() {
+        listOfUsers = loadAccounts();
+        boolean result = false;
+        int limit = 0;
         do {
             System.out.print("Insert username: ");
             String user = new Scanner(System.in).nextLine();
             System.out.print("\nInsert password: ");
             String password = new Scanner(System.in).nextLine();
             User logged = new User(user, password);
-           for(User u : listOfUsers){
+            boolean loggedIn = false;
+            for (User u : listOfUsers) {
                 if (u.equals(logged)) {
                     System.out.println("You're logged in.");
-                } else System.out.println("Fail !");
-             }
-//            if (logged.equals(listOfUsers)){
-//                System.out.println("You're logged in.");
-//            } else System.out.println("Fail !");
+                    loggedIn = result = true;
+                }
+            }
+            if (!loggedIn) {
+                System.out.println("Attempt failed !");
+                limit++;
+                if (limit == 3) System.out.println("Shuting down ...");
+                else System.out.println("Remaining attempts " + (3 - limit));
+            }
         }
-        while (true);
+        while (!result && limit < 3);
+        return result;
     }
 
 
-
-    private List<User> loadAccounts(){
+    private List<User> loadAccounts() {
         Path pIn = Paths.get("Accounts.txt");
         List<User> listOfUsers = new ArrayList<>();
         List<String> listOfUsersAsString = new ArrayList<>();
         try {
             listOfUsersAsString = Files.readAllLines(pIn);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(listOfUsersAsString);
-        for ( int x = 0; x < listOfUsersAsString.size(); x++) {
+        for (int x = 0; x < listOfUsersAsString.size(); x++) {
             User temp = new User();
             String curentLne = listOfUsersAsString.get(x);
             StringTokenizer st = new StringTokenizer(curentLne, ",");
-            while (st.hasMoreTokens()){
+            while (st.hasMoreTokens()) {
                 String u = st.nextToken().trim();
                 String p = st.nextToken().trim();
                 String ad = st.nextToken().trim();
@@ -58,12 +65,12 @@ public class Login {
                 }
             }
             listOfUsers.add(temp);
-            System.out.println(Arrays.toString(listOfUsers.toArray()));
+            System.out.println(listOfUsersAsString);
         }
         return listOfUsers;
     }
 
-    public void create(){
+    public void create() {
         String x = "joi e joi";
         File fi = new File("Nou.txt");
         try {
