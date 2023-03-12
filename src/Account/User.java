@@ -1,4 +1,5 @@
 package Account;
+
 import java.util.Objects;
 
 public class User {
@@ -12,6 +13,15 @@ public class User {
     }
 
     public User() {
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + user + '\'' +
+                ", password='" + password + '\'' +
+                ", administrator='" + isAdministrator() + '\'' +
+                '}';
     }
 
     @Override

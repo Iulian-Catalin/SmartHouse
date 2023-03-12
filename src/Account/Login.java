@@ -15,8 +15,13 @@ import java.util.concurrent.TimeUnit;
 public class Login {
     private static List<User> listOfUsers;
 
-    public boolean login() {
+    public User login() {
+        User temp = new User();
         listOfUsers = loadAccounts();
+        showDb();
+        System.out.println("Welcome to your smart house" +
+                "\nPlease log into your account to continue ...");
+
         boolean result = false;
         int limit = 0;
         do {
@@ -28,6 +33,9 @@ public class Login {
             boolean loggedIn = false;
             for (User u : listOfUsers) {
                 if (u.equals(logged)) {
+                    temp.setUser(u.getUser());
+                    temp.setPassword(u.getPassword());
+                    temp.setAdministrator(u.isAdministrator());
                     System.out.println("You're logged in.");
                     loggedIn = result = true;
                 }
@@ -49,7 +57,7 @@ public class Login {
             }
         }
         while (!result);
-        return result;
+        return temp;
 
     }
 
@@ -78,12 +86,12 @@ public class Login {
                 }
             }
             listOfUsers.add(temp);
-            System.out.println(listOfUsersAsString);
         }
         return listOfUsers;
     }
 
     public void createAccount() {
+        showDb();
         User a = new User();
         System.out.print("\nInser username: ");
         String user = new Scanner(System.in).nextLine();
@@ -95,6 +103,38 @@ public class Login {
         boolean admin = new Scanner(System.in).nextBoolean();
         a.setAdministrator(admin);
         listOfUsers.add(a);
+        actualizeDb();
+    }
+
+    public void removeAccount() {
+        showDb();
+        boolean result = false;
+        do {
+            System.out.print("Insert username: ");
+            String user = new Scanner(System.in).nextLine();
+            User del = new User();
+            boolean loggedIn = false;
+            for (User u : listOfUsers) {
+                if (u.getUser().equals(user)) {
+                    del.setUser(u.getUser());
+                    del.setPassword(u.getPassword());
+                    del.setAdministrator(u.isAdministrator());
+                    loggedIn = true;
+                } else {
+                    System.out.println("Attempt failed !");
+                }
+            }
+            if (loggedIn) {
+                listOfUsers.remove(del);
+                System.out.println("Account deleted !");
+                result = true;
+                actualizeDb();
+            }
+        }
+        while (!result);
+    }
+
+    private void actualizeDb() {
         File os = Paths.get("Accounts.txt").toFile();
         os.delete();
 
@@ -122,56 +162,9 @@ public class Login {
         }
     }
 
-    public void removeAccount() {
-        boolean result = false;
-        do {
-            System.out.print("Insert username: ");
-            String user = new Scanner(System.in).nextLine();
-            User del = new User();
-            boolean loggedIn = false;
-            for (User u : listOfUsers) {
-                if (u.getUser().equals(user)) {
-                    del.setUser(u.getUser());
-                    del.setPassword(u.getPassword());
-                    del.setAdministrator(u.isAdministrator());
-                    loggedIn = true;
-                } else {
-                    System.out.println("Attempt failed !");
-                }
-            }
-            if (loggedIn) {
-                listOfUsers.remove(del);
-                System.out.println("Account deleted !");
-                result = true;
-
-                File os = Paths.get("Accounts.txt").toFile();
-                os.delete();
-
-                os = new File("Accounts.txt");
-                try {
-                    os.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Path p = Paths.get("Accounts.txt");
-                String txt;
-                for (int x = 0; x < listOfUsers.size(); x++) {
-                    if (x == listOfUsers.size() - 1) {
-                        txt = listOfUsers.get(x).getUser() + ", " +
-                                listOfUsers.get(x).getPassword() + ", " +
-                                listOfUsers.get(x).isAdministrator();
-                    } else txt = listOfUsers.get(x).getUser() + ", " +
-                            listOfUsers.get(x).getPassword() + ", " +
-                            listOfUsers.get(x).isAdministrator() + "\n";
-                    try {
-                        Files.write(p, txt.getBytes(), StandardOpenOption.APPEND);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+    private void showDb() {
+        for (User u : listOfUsers) {
+            System.out.println(u.toString());
         }
-        while (!result);
     }
-
 }
