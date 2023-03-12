@@ -24,7 +24,7 @@ public class Menu {
                     System.out.print("\nAdministrator type account: ");
                     boolean admin = new Scanner(System.in).nextBoolean();
                     a.setAdministrator(admin);
-                    a.createAccount(a);
+                    on.createAccount(a);
                 }
                 case 2 -> logged = on.login();
                 case 3 -> {
